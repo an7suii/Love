@@ -2,171 +2,192 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>💖 عيد ميلاد سعيد يا شوشو 💖</title>
+<title>💖 Shosho Birthday 20 💖</title>
+
 <style>
-    body {
-        margin: 0;
-        background: black;
-        overflow: hidden;
-        font-family: Arial;
-    }
+body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial;
+}
 
-    canvas {
-        display: block;
-    }
+canvas {
+    display: block;
+}
 
-    #playBtn {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 15px 30px;
-        font-size: 20px;
-        background: pink;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        z-index: 10;
-    }
+#start {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 18px 35px;
+    font-size: 22px;
+    background: hotpink;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 10;
+}
 </style>
 </head>
 <body>
 
-<button id="playBtn">💖 اضغطي هنا يا شوشو 💖</button>
+<button id="start">💖 اضغطي هنا يا شوشو 💖</button>
 
-<canvas id="canvas"></canvas>
+<canvas id="c"></canvas>
 
 <audio id="music" loop>
     <source src="song.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const c = document.getElementById("c");
+const ctx = c.getContext("2d");
+const btn = document.getElementById("start");
 const music = document.getElementById("music");
-const playBtn = document.getElementById("playBtn");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+c.width = window.innerWidth;
+c.height = window.innerHeight;
 
 let started = false;
 
-playBtn.onclick = () => {
+btn.onclick = () => {
     music.play();
-    playBtn.style.display = "none";
     started = true;
+    btn.style.display = "none";
 };
 
-let messages = [
-    "كل عام وانتي بخير يا شوشو ❤️",
-    "اليوم ميلاد أجمل إنسانة بحياتي 💖",
-    "وجودك هو أجمل شيء صار لي ✨",
-    "أحبك أكثر مما تتخيلي 🌹",
-    "وأتمنى لك سعادة ما تنتهي 💫",
-    "انتي قلبي وكل دنيتي ❤️"
+/* 💖 رسائل */
+let msgs = [
+"🎂 اليوم 20… يوم ميلاد شوشو الجميلة 💖",
+"انتي مو مجرد شخص… انتي سعادة تمشي ✨",
+"ابتسامتك تسوى الدنيا وما فيها 😍",
+"يا شوشو انتي أجمل حكاية 💕",
+"كل سنة وانتي بخير يا قلب قلبي ❤️",
+"الله يحفظك ويخليك دايمًا فرحانة 💫",
+"وجودك نعمة كبيرة 🌹",
+"Happy Birthday Shosho 🎉💖"
 ];
 
-let msgIndex = 0;
+let i = 0;
+setInterval(()=> {
+    i = (i + 1) % msgs.length;
+}, 2200);
 
-setInterval(() => {
-    msgIndex = (msgIndex + 1) % messages.length;
-}, 2000);
-
+/* 💜 قلوب بنفسجية (بدل النجوم) */
 let stars = [];
-for (let i = 0; i < 80; i++) {
+for(let i=0;i<120;i++){
     stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height
+        x: Math.random()*c.width,
+        y: Math.random()*c.height,
+        s: Math.random()*6 + 2,
+        v: Math.random()*1 + 0.5
     });
 }
 
+/* 💖 قلوب طايرة */
 let hearts = [];
 
-function createHeart() {
+function addHeart(){
     hearts.push({
-        x: Math.random() * canvas.width,
-        y: canvas.height,
-        size: Math.random() * 10 + 10,
-        speed: Math.random() * 2 + 1
+        x: Math.random()*c.width,
+        y: c.height,
+        s: Math.random()*10+8,
+        v: Math.random()*2+1
     });
 }
 
+/* 💖 رسم قلب صغير */
+function drawHeart(x, y, size){
+    ctx.fillStyle = "violet";
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.bezierCurveTo(x + size, y - size,
+                      x + size*2, y + size/2,
+                      x, y + size*2);
+    ctx.bezierCurveTo(x - size*2, y + size/2,
+                      x - size, y - size,
+                      x, y);
+    ctx.fill();
+}
+
+/* ❤️ قلب كبير */
 let scale = 10;
-let growing = true;
+let grow = true;
 
-function drawBigHeart(scale) {
-    ctx.beginPath();
-    for (let t = 0; t <= 360; t++) {
-        let rad = t * Math.PI / 180;
-        let x = 16 * Math.sin(rad) ** 3;
-        let y = -(13 * Math.cos(rad) - 5 * Math.cos(2*rad)
-            - 2 * Math.cos(3*rad) - Math.cos(4*rad));
+function bigHeart(){
+    for(let t=0;t<360;t++){
+        let r = t*Math.PI/180;
+        let x = 16*Math.sin(r)**3;
+        let y = -(13*Math.cos(r)-5*Math.cos(2*r)-2*Math.cos(3*r)-Math.cos(4*r));
 
-        x = canvas.width/2 + x * scale;
-        y = canvas.height/2 + y * scale;
+        x = c.width/2 + x*scale;
+        y = c.height/2 + y*scale;
 
-        if (t === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        ctx.fillStyle = "red";
+        ctx.fillRect(x,y,2,2);
     }
-    ctx.closePath();
-    ctx.fillStyle = "red";
-    ctx.fill();
 }
 
-function drawSmallHeart(x, y, size) {
-    ctx.fillStyle = "pink";
-    ctx.beginPath();
-    ctx.arc(x, y, size/2, 0, Math.PI * 2);
-    ctx.fill();
-}
+/* 🎬 الرسم */
+function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
 
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    /* 💜 قلوب بنفسجية خلفية */
+    ctx.fillStyle="purple";
+    stars.forEach(s=>{
+        s.y += s.v;
 
-    ctx.fillStyle = "white";
-    stars.forEach(star => {
-        star.y += 1;
-        if (star.y > canvas.height) {
-            star.y = 0;
-            star.x = Math.random() * canvas.width;
+        if(s.y > c.height){
+            s.y = 0;
+            s.x = Math.random()*c.width;
         }
-        ctx.fillRect(star.x, star.y, 2, 2);
+
+        drawHeart(s.x, s.y, s.s);
     });
 
-    if (started && Math.random() < 0.1) createHeart();
+    /* 💖 قلوب طايرة */
+    if(started && Math.random()<0.12) addHeart();
 
-    hearts.forEach((h, i) => {
-        h.y -= h.speed;
-        drawSmallHeart(h.x, h.y, h.size);
+    hearts.forEach((h,i)=>{
+        h.y -= h.v;
+        drawHeart(h.x,h.y,h.s);
 
-        if (h.y < 0) hearts.splice(i, 1);
+        if(h.y<0) hearts.splice(i,1);
     });
 
-    drawBigHeart(scale);
+    /* ❤️ القلب الكبير */
+    bigHeart();
 
-    if (started) {
-        ctx.fillStyle = "pink";
-        ctx.font = "bold 24px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(messages[msgIndex], canvas.width/2, 50);
+    /* 💌 النصوص */
+    if(started){
+        ctx.fillStyle="hotpink";
+        ctx.font="bold 26px Arial";
+        ctx.textAlign="center";
+        ctx.fillText(msgs[i], c.width/2, 60);
 
-        ctx.fillStyle = "white";
-        ctx.font = "bold 18px Arial";
-        ctx.fillText("💖 I Love You Shosho 💖", canvas.width/2, canvas.height - 50);
+        ctx.fillStyle="white";
+        ctx.font="bold 20px Arial";
+        ctx.fillText("💖 Happy Birthday Shosho 💖", c.width/2, c.height-60);
+
+        ctx.font="bold 18px Arial";
+        ctx.fillText("🎂 20th Birthday Special 🎂", c.width/2, c.height-30);
     }
 
-    if (growing) {
+    /* 🔄 حركة */
+    if(grow){
         scale += 0.1;
-        if (scale >= 12) growing = false;
+        if(scale > 12) grow = false;
     } else {
         scale -= 0.1;
-        if (scale <= 10) growing = true;
+        if(scale < 10) grow = true;
     }
 
-    requestAnimationFrame(animate);
+    requestAnimationFrame(draw);
 }
 
-animate();
+draw();
 </script>
 
 </body>
