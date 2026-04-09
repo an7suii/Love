@@ -7,7 +7,7 @@
 <style>
 body {
     margin: 0;
-    background: black;
+    background: radial-gradient(circle, #0a0a0a, black);
     overflow: hidden;
     font-family: Arial;
 }
@@ -23,11 +23,13 @@ canvas {
     transform: translate(-50%, -50%);
     padding: 18px 35px;
     font-size: 22px;
-    background: hotpink;
+    background: linear-gradient(45deg, #ff69b4, #ff1493);
+    color: white;
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
     z-index: 10;
+    box-shadow: 0 0 20px hotpink;
 }
 </style>
 </head>
@@ -58,15 +60,15 @@ btn.onclick = () => {
     btn.style.display = "none";
 };
 
-/* 💖 رسائل */
+/* 💌 رسائل */
 let msgs = [
-"🎂 اليوم 20… يوم ميلاد شوشو الجميلة 💖",
-"انتي مو مجرد شخص… انتي سعادة تمشي ✨",
-"ابتسامتك تسوى الدنيا وما فيها 😍",
-"يا شوشو انتي أجمل حكاية 💕",
-"كل سنة وانتي بخير يا قلب قلبي ❤️",
-"الله يحفظك ويخليك دايمًا فرحانة 💫",
-"وجودك نعمة كبيرة 🌹",
+"🎂 اليوم 20… يوم ميلاد شوشو 💖",
+"انتي أجمل شعور بالحياة ✨",
+"ابتسامتك تضيء قلبي 😍",
+"يا شوشو انتي الحلم الجميل 💕",
+"كل سنة وانتي بخير ❤️",
+"الله يحفظك دايمًا 💫",
+"وجودك نعمة ما تنوصف 🌹",
 "Happy Birthday Shosho 🎉💖"
 ];
 
@@ -75,14 +77,14 @@ setInterval(()=> {
     i = (i + 1) % msgs.length;
 }, 2200);
 
-/* 💜 قلوب بنفسجية (بدل النجوم) */
+/* 💜 قلوب بنفسجية */
 let stars = [];
-for(let i=0;i<120;i++){
+for(let i=0;i<140;i++){
     stars.push({
         x: Math.random()*c.width,
         y: Math.random()*c.height,
-        s: Math.random()*6 + 2,
-        v: Math.random()*1 + 0.5
+        s: Math.random()*8 + 2,
+        v: Math.random()*1.2 + 0.5
     });
 }
 
@@ -93,49 +95,55 @@ function addHeart(){
     hearts.push({
         x: Math.random()*c.width,
         y: c.height,
-        s: Math.random()*10+8,
+        s: Math.random()*12+6,
         v: Math.random()*2+1
     });
 }
 
-/* 💖 رسم قلب صغير */
-function drawHeart(x, y, size){
-    ctx.fillStyle = "violet";
+/* 💜 قلب وردي واضح */
+function drawHeart(x,y,size){
+    ctx.fillStyle = "#ff4da6"; // وردي واضح وثابت
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.bezierCurveTo(x + size, y - size,
-                      x + size*2, y + size/2,
-                      x, y + size*2);
-    ctx.bezierCurveTo(x - size*2, y + size/2,
-                      x - size, y - size,
-                      x, y);
+    ctx.moveTo(x,y);
+    ctx.bezierCurveTo(x+size,y-size,
+                      x+size*2,y+size/2,
+                      x,y+size*2);
+    ctx.bezierCurveTo(x-size*2,y+size/2,
+                      x-size,y-size,
+                      x,y);
     ctx.fill();
 }
 
-/* ❤️ قلب كبير */
-let scale = 10;
-let grow = true;
-
+/* ❤️ قلب S */
 function bigHeart(){
-    for(let t=0;t<360;t++){
-        let r = t*Math.PI/180;
-        let x = 16*Math.sin(r)**3;
-        let y = -(13*Math.cos(r)-5*Math.cos(2*r)-2*Math.cos(3*r)-Math.cos(4*r));
+    ctx.fillStyle = "#ff2e93";
+    ctx.font = "bold 16px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
-        x = c.width/2 + x*scale;
-        y = c.height/2 + y*scale;
+    let scale = 13;
 
-        ctx.fillStyle = "red";
-        ctx.fillRect(x,y,2,2);
+    for (let t = 0; t <= 360; t += 3) {
+        let r = t * Math.PI / 180;
+
+        let x = 16 * Math.sin(r) ** 3;
+        let y = -(13 * Math.cos(r)
+                - 5 * Math.cos(2*r)
+                - 2 * Math.cos(3*r)
+                - Math.cos(4*r));
+
+        x = c.width/2 + x * scale;
+        y = c.height/2 + y * scale + 40; // 👈 نزّلنا القلب لتحت
+
+        ctx.fillText("S", x, y);
     }
 }
 
-/* 🎬 الرسم */
+/* 🎬 رسم */
 function draw(){
     ctx.clearRect(0,0,c.width,c.height);
 
-    /* 💜 قلوب بنفسجية خلفية */
-    ctx.fillStyle="purple";
+    /* 💜 خلفية قلوب */
     stars.forEach(s=>{
         s.y += s.v;
 
@@ -144,11 +152,11 @@ function draw(){
             s.x = Math.random()*c.width;
         }
 
-        drawHeart(s.x, s.y, s.s);
+        drawHeart(s.x,s.y,s.s);
     });
 
     /* 💖 قلوب طايرة */
-    if(started && Math.random()<0.12) addHeart();
+    if(started && Math.random()<0.14) addHeart();
 
     hearts.forEach((h,i)=>{
         h.y -= h.v;
@@ -157,31 +165,25 @@ function draw(){
         if(h.y<0) hearts.splice(i,1);
     });
 
-    /* ❤️ القلب الكبير */
+    /* ❤️ قلب S */
     bigHeart();
 
-    /* 💌 النصوص */
+    /* 💌 نصوص (مرفوعة لفوق عشان ما تتعارض) */
     if(started){
-        ctx.fillStyle="hotpink";
-        ctx.font="bold 26px Arial";
-        ctx.textAlign="center";
-        ctx.fillText(msgs[i], c.width/2, 60);
-
         ctx.fillStyle="white";
-        ctx.font="bold 20px Arial";
+        ctx.font="bold 28px Arial";
+        ctx.textAlign="center";
+        ctx.shadowColor="hotpink";
+        ctx.shadowBlur = 10;
+        ctx.fillText(msgs[i], c.width/2, 50); // 👈 رفعنا النص
+
+        ctx.fillStyle="#ffb6e6";
+        ctx.font="bold 22px Arial";
         ctx.fillText("💖 Happy Birthday Shosho 💖", c.width/2, c.height-60);
 
+        ctx.fillStyle="white";
         ctx.font="bold 18px Arial";
         ctx.fillText("🎂 20th Birthday Special 🎂", c.width/2, c.height-30);
-    }
-
-    /* 🔄 حركة */
-    if(grow){
-        scale += 0.1;
-        if(scale > 12) grow = false;
-    } else {
-        scale -= 0.1;
-        if(scale < 10) grow = true;
     }
 
     requestAnimationFrame(draw);
