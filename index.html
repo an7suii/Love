@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>💖 عيد ميلاد سعيد يا شوشو 💖</title>
+<style>
+    body {
+        margin: 0;
+        background: black;
+        overflow: hidden;
+        font-family: Arial;
+    }
+
+    canvas {
+        display: block;
+    }
+
+    #playBtn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 15px 30px;
+        font-size: 20px;
+        background: pink;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        z-index: 10;
+    }
+</style>
+</head>
+<body>
+
+<button id="playBtn">💖 اضغطي هنا يا شوشو 💖</button>
+
+<canvas id="canvas"></canvas>
+
+<audio id="music" loop>
+    <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const music = document.getElementById("music");
+const playBtn = document.getElementById("playBtn");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let started = false;
+
+playBtn.onclick = () => {
+    music.play();
+    playBtn.style.display = "none";
+    started = true;
+};
+
+let messages = [
+    "كل عام وانتي بخير يا شوشو ❤️",
+    "اليوم ميلاد أجمل إنسانة بحياتي 💖",
+    "وجودك هو أجمل شيء صار لي ✨",
+    "أحبك أكثر مما تتخيلي 🌹",
+    "وأتمنى لك سعادة ما تنتهي 💫",
+    "انتي قلبي وكل دنيتي ❤️"
+];
+
+let msgIndex = 0;
+
+setInterval(() => {
+    msgIndex = (msgIndex + 1) % messages.length;
+}, 2000);
+
+let stars = [];
+for (let i = 0; i < 80; i++) {
+    stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height
+    });
+}
+
+let hearts = [];
+
+function createHeart() {
+    hearts.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height,
+        size: Math.random() * 10 + 10,
+        speed: Math.random() * 2 + 1
+    });
+}
+
+let scale = 10;
+let growing = true;
+
+function drawBigHeart(scale) {
+    ctx.beginPath();
+    for (let t = 0; t <= 360; t++) {
+        let rad = t * Math.PI / 180;
+        let x = 16 * Math.sin(rad) ** 3;
+        let y = -(13 * Math.cos(rad) - 5 * Math.cos(2*rad)
+            - 2 * Math.cos(3*rad) - Math.cos(4*rad));
+
+        x = canvas.width/2 + x * scale;
+        y = canvas.height/2 + y * scale;
+
+        if (t === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "red";
+    ctx.fill();
+}
+
+function drawSmallHeart(x, y, size) {
+    ctx.fillStyle = "pink";
+    ctx.beginPath();
+    ctx.arc(x, y, size/2, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "white";
+    stars.forEach(star => {
+        star.y += 1;
+        if (star.y > canvas.height) {
+            star.y = 0;
+            star.x = Math.random() * canvas.width;
+        }
+        ctx.fillRect(star.x, star.y, 2, 2);
+    });
+
+    if (started && Math.random() < 0.1) createHeart();
+
+    hearts.forEach((h, i) => {
+        h.y -= h.speed;
+        drawSmallHeart(h.x, h.y, h.size);
+
+        if (h.y < 0) hearts.splice(i, 1);
+    });
+
+    drawBigHeart(scale);
+
+    if (started) {
+        ctx.fillStyle = "pink";
+        ctx.font = "bold 24px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(messages[msgIndex], canvas.width/2, 50);
+
+        ctx.fillStyle = "white";
+        ctx.font = "bold 18px Arial";
+        ctx.fillText("💖 I Love You Shosho 💖", canvas.width/2, canvas.height - 50);
+    }
+
+    if (growing) {
+        scale += 0.1;
+        if (scale >= 12) growing = false;
+    } else {
+        scale -= 0.1;
+        if (scale <= 10) growing = true;
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
